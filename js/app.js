@@ -1,10 +1,30 @@
 // 曜日の英語表記
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+// HTMLに時間割を表示する関数
+function displayTimetable(timetable) {
+  const timetableContainer = document.getElementById('timetable');
+
+  timetable.forEach(classInfo => {
+    const classElement = document.createElement('div');
+    classElement.classList.add('class-info');
+    classElement.innerHTML = `
+      <h3>${classInfo.day} - ${classInfo.subject}</h3>
+      <p>時間: ${classInfo.start}</p>
+      <p>場所: ${classInfo.location}</p>
+      <p>期間: ${classInfo.period}限</p>
+    `;
+    timetableContainer.appendChild(classElement);
+  });
+}
+
 // JSONファイルから時間割を読み込む
 fetch('timetable.json')
   .then(response => response.json())
   .then(timetable => {
+    // 時間割を画面に表示
+    displayTimetable(timetable);
+
     // 通知機能を設定
     function checkNextClass() {
       const currentTime = new Date();
