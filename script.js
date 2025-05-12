@@ -66,3 +66,27 @@ function generateTimetable() {
 
 // 時間割を生成
 generateTimetable();
+
+// 通知機能を追加
+function checkUpcomingClass() {
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0:日曜日, 1:月曜日, ..., 5:金曜日
+  const currentTime = now.getHours() * 60 + now.getMinutes(); // 現在時刻（分単位）
+
+  const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
+
+  timetableData.forEach(lesson => {
+    if (days[dayOfWeek] === lesson.day) {
+      const lessonStart = lesson.start.split(":");
+      const lessonStartTime = parseInt(lessonStart[0]) * 60 + parseInt(lessonStart[1]);
+      const reminderTime = lessonStartTime - 10; // 10分前
+
+      if (currentTime === reminderTime) {
+        alert(`授業「${lesson.subject}」がもうすぐ始まります！場所: ${lesson.location}`);
+      }
+    }
+  });
+}
+
+// 1分ごとに現在時刻と授業開始時刻を比較
+setInterval(checkUpcomingClass, 60000);
