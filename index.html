@@ -3,19 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>時間割</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>時間割通知システム</title>
+    <style>
+        /* 時間割表示の簡単なスタイル */
+        #timetable {
+            margin-top: 20px;
+        }
+
+        .class-info {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .class-info h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
+    <h1>時間割通知システム</h1>
+    <p>時間割が始まる10分前に通知が届きます。</p>
+    
+    <div id="timetable">
+        <!-- 時間割がここに表示されます -->
+    </div>
 
-<header>
-    <h1>時間割</h1>
-</header>
-
-<div id="schedule">
-    <!-- 時間割がここに表示されます -->
-</div>
-
-<script src="js/app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
