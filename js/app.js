@@ -1,17 +1,15 @@
-// timetable.json のデータを読み込む
+// JSONの時間割データを取得
 fetch('timetable.json')
   .then(response => response.json())
   .then(timetable => {
-    renderSchedule(timetable);
-    if (Notification.permission === "granted") {
-      checkNextClass(timetable);
-    }
+    renderSchedule(timetable);  // 時間割を表示
+    requestNotificationPermission();  // 通知の許可をリクエスト
+    checkNextClass(timetable);  // 次の授業を確認
   });
 
-// 曜日ごとに時間割を表示する関数
+// 曜日ごとの時間割を表示する関数
 function renderSchedule(timetable) {
     const scheduleDiv = document.getElementById('schedule');
-
     const daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday"];
     
     daysOfWeek.forEach(day => {
@@ -44,50 +42,59 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-// 現在の時間を取得し、通知を送る
+// 通知の許可をリクエストする関数
+function requestNotificationPermission() {
+    if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                console.log("通知が許可されました。");
+            }
+        });
+    }
+}
+
+// 現在の時間を取得し、次の授業の通知を送る関数
 function checkNextClass(timetable) {
     const now = new Date();
-    const currentDay = now.getDay(); // 0（日曜日）から6（土曜日）
+    const currentDay = now.getDay(); // 0(日曜日)〜6(土曜日)
     const currentTime = now.getHours() * 60 + now.getMinutes(); // 現在の時刻（分単位）
 
     // 日曜日を除外
     if (currentDay === 0) return;
 
-    // 曜日ごとの時間割を取得
     const dayNames = ["monday", "tuesday", "wednesday", "thursday", "friday"];
     const currentDayName = dayNames[currentDay - 1]; // 現在の曜日名を取得
 
     // 次の授業を検索
-    const nextClass = timetable.filter(item => item.day === currentDayName && (item.start.split(":")[0] * 60 + parseInt(item.start.split(":")[1]) > currentTime));
+    const nextClass = timetable.filter(item => item.day === currentDayName &&
+        (parseTime(item.start) > currentTime));  // 現在の時間より後の授業
 
     if (nextClass.length > 0) {
-        const classInfo = nextClass[0];
+        const classInfo = nextClass[0];  // 次の授業
         const notifyTime = new Date(now);
         const [hours, minutes] = classInfo.start.split(":").map(num => parseInt(num));
-        notifyTime.setHours(hours, minutes, 0);
+        notifyTime.setHours(hours, minutes, 0); // 次の授業の開始時間に合わせて通知
 
-        // 通知の発行
+        // 通知の発行タイミングを設定
+        const timeUntilNotify = notifyTime.getTime() - now.getTime();
         setTimeout(() => {
-            showNotification(classInfo.subject, `${classInfo.subject}の授業がもうすぐ開始します。${classInfo.location}`);
-        }, notifyTime.getTime() - now.getTime());
+            showNotification(classInfo.subject, `${classInfo.subject}の授業がもうすぐ始まります！`);
+        }, timeUntilNotify);
     }
+}
+
+// 時刻を分に変換するヘルパー関数
+function parseTime(time) {
+    const [hours, minutes] = time.split(":").map(num => parseInt(num));
+    return hours * 60 + minutes;
 }
 
 // 通知を表示する関数
 function showNotification(title, body) {
     if (Notification.permission === "granted") {
-        const notification = new Notification(title, {
+        new Notification(title, {
             body: body,
-            icon: "https://example.com/icon.png"
+            icon: "https://example.com/icon.png"  // アイコンのURLを適宜設定
         });
     }
-}
-
-// ページ読み込み時に通知の許可を確認
-if (Notification.permission !== "denied") {
-    Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-            checkNextClass(timetable);
-        }
-    });
 }
