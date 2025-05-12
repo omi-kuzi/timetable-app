@@ -35,43 +35,34 @@ const timetableData = [
 ];
 
 function generateTimetable() {
-  const timetableElement = document.getElementById("timetable");
+  const tbody = document.querySelector("#timetable tbody");
 
-  // 曜日ごとにデータを分ける
+  // 曜日ごとにデータを分けて時間帯を表示
   const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
   const periods = ["1", "2", "3", "4", "5", "6", "7"];
 
-  // ヘッダー行の作成
-  const header = document.createElement("div");
-  header.classList.add("header");
-  header.innerHTML = "<div>時間帯</div><div>月曜日</div><div>火曜日</div><div>水曜日</div><div>木曜日</div><div>金曜日</div>";
-  timetableElement.appendChild(header);
-
-  // 各時間帯ごとにループして授業情報を埋め込む
   periods.forEach(period => {
-    const row = document.createElement("div");
-    row.classList.add("lesson");
+    const row = document.createElement("tr");
 
-    // 時間帯
-    const timeSlot = document.createElement("div");
-    timeSlot.classList.add("time-slot");
-    timeSlot.innerText = `第${period}限`;
-    row.appendChild(timeSlot);
+    // 時間帯を表示
+    const timeSlotCell = document.createElement("td");
+    timeSlotCell.innerText = `第${period}限`;
+    row.appendChild(timeSlotCell);
 
-    // 各曜日に対応する授業を追加
+    // 各曜日の授業を追加
     days.forEach(day => {
-      const lessonCell = document.createElement("div");
-      lessonCell.classList.add("lesson");
-
-      const lesson = timetableData.find(item => item.day === day && item.period.toString() === period);
+      const cell = document.createElement("td");
+      const lesson = timetableData.find(item => item.day === day && item.period == period);
       if (lesson) {
-        lessonCell.innerHTML = `<strong>${lesson.subject}</strong><br>${lesson.start} - ${lesson.end}<br>${lesson.location}`;
+        cell.classList.add("lesson");
+        cell.innerHTML = `<strong>${lesson.subject}</strong><br>${lesson.location}`;
       }
-      row.appendChild(lessonCell);
+      row.appendChild(cell);
     });
 
-    timetableElement.appendChild(row);
+    tbody.appendChild(row);
   });
 }
 
-document.addEventListener("DOMContentLoaded", generateTimetable);
+// 時間割を生成
+generateTimetable();
