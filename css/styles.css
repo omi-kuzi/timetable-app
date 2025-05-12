@@ -20,7 +20,7 @@ body {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 80%;
+  width: 90%;
   max-width: 900px;
 }
 
@@ -29,38 +29,39 @@ h1 {
   margin-bottom: 20px;
 }
 
-.timetable {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 10px;
+table {
+  width: 100%;
+  border-collapse: collapse;
   text-align: center;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #00bcd4;
+  color: white;
+  font-weight: bold;
+}
+
+td {
+  background-color: #e0f7fa;
+}
+
+td.lesson {
+  background-color: #ffffff;
   font-size: 14px;
 }
 
-.timetable div {
-  padding: 10px;
-  background-color: #e0f7fa;
-  border: 1px solid #b2ebf2;
-  border-radius: 5px;
-}
-
-.timetable .header {
-  font-weight: bold;
-  background-color: #00bcd4;
-  color: white;
-}
-
-.timetable .day {
-  background-color: #b2ebf2;
-  font-weight: bold;
-}
-
-.timetable .lesson {
-  background-color: #ffffff;
+td.lesson strong {
+  font-size: 16px;
+  color: #00796b;
 }
 
 @media (max-width: 768px) {
-  .timetable {
-    grid-template-columns: repeat(4, 1fr);
+  table {
+    font-size: 12px;
   }
 }
