@@ -1,38 +1,58 @@
-const timetableData = [
-  { "day": "monday", "period": 1, "start": "08:45", "end": "09:35", "subject": "コミュ英", "location": "25教室" },
-  { "day": "monday", "period": 2, "start": "09:45", "end": "10:35", "subject": "公共", "location": "25教室" },
-  { "day": "monday", "period": 3, "start": "10:45", "end": "11:35", "subject": "数学Ⅱ", "location": "2-35教室" },
-  { "day": "monday", "period": 4, "start": "11:45", "end": "12:35", "subject": "古典", "location": "2-35教室" },
-  { "day": "monday", "period": 5, "start": "13:20", "end": "14:10", "subject": "化学", "location": "物理室" },
-  { "day": "monday", "period": 6, "start": "14:20", "end": "15:10", "subject": "体育", "location": "体育館" },
-  { "day": "monday", "period": 7, "start": "15:40", "end": "16:30", "subject": "物理", "location": "物理室" },
-  { "day": "tuesday", "period": 1, "start": "08:45", "end": "09:35", "subject": "化学", "location": "物理室" },
-  { "day": "tuesday", "period": 2, "start": "09:45", "end": "10:35", "subject": "数学Ⅱ", "location": "2-35" },
-  { "day": "tuesday", "period": 3, "start": "10:45", "end": "11:35", "subject": "論理表現", "location": "25教室" },
-  { "day": "tuesday", "period": 4, "start": "11:45", "end": "12:35", "subject": "物理", "location": "物理室" },
-  { "day": "tuesday", "period": 5, "start": "13:20", "end": "14:10", "subject": "家庭", "location": "25教室" },
-  { "day": "tuesday", "period": 6, "start": "14:20", "end": "15:10", "subject": "家庭科", "location": "25教室" },
-  { "day": "tuesday", "period": 7, "start": "15:20", "end": "16:10", "subject": "LHR", "location": "25教室" },
-  { "day": "wednesday", "period": 1, "start": "08:45", "end": "09:35", "subject": "数学B", "location": "2-35" },
-  { "day": "wednesday", "period": 2, "start": "09:45", "end": "10:35", "subject": "論国", "location": "2-35" },
-  { "day": "wednesday", "period": 3, "start": "10:45", "end": "11:35", "subject": "化学", "location": "物理室" },
-  { "day": "wednesday", "period": 4, "start": "11:45", "end": "12:35", "subject": "コミュ英", "location": "25教室" },
-  { "day": "wednesday", "period": 5, "start": "13:20", "end": "14:10", "subject": "論表", "location": "25教室" },
-  { "day": "wednesday", "period": 6, "start": "14:20", "end": "15:10", "subject": "物理", "location": "物理室" },
-  { "day": "thursday", "period": 1, "start": "08:45", "end": "09:35", "subject": "化学", "location": "物理室" },
-  { "day": "thursday", "period": 2, "start": "09:45", "end": "10:35", "subject": "宗教", "location": "宗教教室" },
-  { "day": "thursday", "period": 3, "start": "10:45", "end": "11:35", "subject": "コミュ英", "location": "25教室" },
-  { "day": "thursday", "period": 4, "start": "11:45", "end": "12:35", "subject": "論国", "location": "2-35" },
-  { "day": "thursday", "period": 5, "start": "13:20", "end": "14:10", "subject": "古典", "location": "2-35" },
-  { "day": "thursday", "period": 6, "start": "14:20", "end": "15:10", "subject": "数学Ⅱ", "location": "2-35" },
-  { "day": "thursday", "period": 7, "start": "15:30", "end": "16:20", "subject": "保険", "location": "25教室" },
-  { "day": "friday", "period": 1, "start": "08:45", "end": "09:35", "subject": "化学", "location": "物理室" },
-  { "day": "friday", "period": 2, "start": "09:45", "end": "10:35", "subject": "数学Ⅱ", "location": "2-35" },
-  { "day": "friday", "period": 3, "start": "10:45", "end": "11:35", "subject": "コミュ英", "location": "25教室" },
-  { "day": "friday", "period": 4, "start": "11:45", "end": "12:35", "subject": "体育", "location": "体育館" },
-  { "day": "friday", "period": 5, "start": "13:20", "end": "14:10", "subject": "数学B", "location": "2-35" },
-  { "day": "friday", "period": 6, "start": "14:20", "end": "15:10", "subject": "公共", "location": "25教室" }
-];
+let notificationEnabled = false;
+
+function toggleNotification() {
+  notificationEnabled = !notificationEnabled;
+  const button = document.getElementById("notification-toggle");
+
+  // 通知オン・オフを切り替える
+  if (notificationEnabled) {
+    button.innerText = "通知オフ";
+    startNotifications(); // 通知を開始する関数を呼び出す
+  } else {
+    button.innerText = "通知オン";
+    stopNotifications(); // 通知を停止する関数を呼び出す
+  }
+}
+
+// 通知を開始する関数
+function startNotifications() {
+  // 通知の設定（10分前に通知を送る処理）
+  setInterval(checkAndNotify, 60000); // 1分ごとにチェック
+}
+
+// 通知を停止する関数
+function stopNotifications() {
+  clearInterval(notificationInterval); // 通知を停止
+}
+
+// 通知を送るかどうかをチェックする関数
+function checkAndNotify() {
+  const now = new Date();
+  const currentDay = now.toLocaleString('ja-JP', { weekday: 'long' }).toLowerCase(); // 今日の曜日
+  const currentTime = now.getHours() * 60 + now.getMinutes(); // 現在時刻（分単位）
+
+  timetableData.forEach(item => {
+    const [hour, minute] = item.start.split(":").map(Number);
+    const startTime = hour * 60 + minute; // 授業開始時刻（分単位）
+
+    // 授業開始10分前の時刻と比較
+    if (item.day === currentDay && currentTime === startTime - 10) {
+      // 通知を表示
+      showNotification(item);
+    }
+  });
+}
+
+// 通知を表示する関数
+function showNotification(lesson) {
+  new Notification(`もうすぐ授業: ${lesson.subject}`, {
+    body: `場所: ${lesson.location}`,
+    icon: 'notification-icon.png', // アイコンを設定
+  });
+}
+
+// 時間割を生成
+generateTimetable();
 
 function generateTimetable() {
   const tbody = document.querySelector("#timetable tbody");
@@ -63,30 +83,3 @@ function generateTimetable() {
     tbody.appendChild(row);
   });
 }
-
-// 時間割を生成
-generateTimetable();
-
-// 通知機能を追加
-function checkUpcomingClass() {
-  const now = new Date();
-  const dayOfWeek = now.getDay(); // 0:日曜日, 1:月曜日, ..., 5:金曜日
-  const currentTime = now.getHours() * 60 + now.getMinutes(); // 現在時刻（分単位）
-
-  const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday"];
-
-  timetableData.forEach(lesson => {
-    if (days[dayOfWeek] === lesson.day) {
-      const lessonStart = lesson.start.split(":");
-      const lessonStartTime = parseInt(lessonStart[0]) * 60 + parseInt(lessonStart[1]);
-      const reminderTime = lessonStartTime - 10; // 10分前
-
-      if (currentTime === reminderTime) {
-        alert(`授業「${lesson.subject}」がもうすぐ始まります！場所: ${lesson.location}`);
-      }
-    }
-  });
-}
-
-// 1分ごとに現在時刻と授業開始時刻を比較
-setInterval(checkUpcomingClass, 60000);
